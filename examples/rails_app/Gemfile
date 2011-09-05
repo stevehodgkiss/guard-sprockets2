@@ -17,7 +17,6 @@ group :development, :assets do
   
   gem 'guard-sprockets2', :path => '../../'
   gem 'rb-fsevent'
-  gem 'ruby-debug19', :require => 'ruby-debug'
 end
 
 
