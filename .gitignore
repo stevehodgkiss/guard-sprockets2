@@ -1,0 +1,6 @@
+*.gem
+.bundle
+Gemfile.lock
+pkg/*
+examples/rails_app/public/assets/*
+examples/sinatra_app/public/assets/*

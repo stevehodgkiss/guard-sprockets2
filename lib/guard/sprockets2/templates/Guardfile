@@ -1,0 +1,11 @@
+require './app' # Require your app with sprockets
+
+guard 'sprockets2', :sprockets => App.settings.sprockets do
+  watch(%r{^assets/.+$})
+  watch('app.rb')
+end
+
+guard 'sprockets2', :sprockets => Rails.config.assets do
+  watch(%r{^app/assets/.+$})
+  watch('config/application.rb')
+end

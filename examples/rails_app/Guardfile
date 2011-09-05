@@ -1,0 +1,6 @@
+require './config/environment' # Require your app with sprockets
+
+guard 'sprockets2' do
+  watch(%r{^app/assets/.+$})
+  watch('config/application.rb')
+end
