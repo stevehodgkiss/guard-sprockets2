@@ -6,9 +6,9 @@ Gem::Specification.new do |s|
   s.name        = "guard-sprockets2"
   s.version     = Guard::Sprockets2Version::VERSION
   s.authors     = ["Steve Hodgkiss"]
-  s.email       = ["steve@hodgkiss.me.uk"]
-  s.homepage    = ""
-  s.summary     = %q{}
+  s.email       = ["steve@hodgkiss.me"]
+  s.homepage    = "https://github.com/stevehodgkiss/guard-sprockets2"
+  s.summary     = %q{Guard for compiling sprockets assets}
   s.description = %q{}
 
   s.rubyforge_project = "guard-sprockets2"
