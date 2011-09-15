@@ -22,22 +22,9 @@ Configure guard for your environment. The following options are available:
 - `assets_path` - Optional. The compiled assets path. Defaults to public/assets
 - `precompile` - Optional. An array of regex's or strings which match files 
 that need compiling. Defaults to `[ /\w+\.(?!js|css).+/, /application.(css|js)$/ ]`
+- `digest` - Optional. Whether to include the digest in the filename. Defaults to true.
 
 Example Rails and Sinatra apps can be found in the examples directory.
-
-# Rails
-
-When Rails is loaded the defaults come from Rails' configuration, so no 
-additional configuration is necessary.
-
-```ruby
-require './config/environment'
-
-guard 'sprockets2' do
-  watch(%r{^app/assets/.+$})
-  watch('config/application.rb')
-end
-```
 
 # Sinatra
 
@@ -47,5 +34,18 @@ require './app'
 guard 'sprockets2', :sprockets => App.sprockets do
   watch(%r{^assets/.+$})
   watch('app.rb')
+end
+```
+
+# Rails
+
+When Rails is loaded the defaults come from Rails' configuration.
+
+```ruby
+require './config/environment'
+
+guard 'sprockets2' do
+  watch(%r{^app/assets/.+$})
+  watch('config/application.rb')
 end
 ```

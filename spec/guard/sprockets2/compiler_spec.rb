@@ -12,13 +12,13 @@ describe Guard::Sprockets2::Compiler do
   let(:compiled_path) { root.join("compiled") }
   
   before do
+    FileUtils.rm_rf root, :secure => true
     FileUtils.mkdir_p assets_path
     FileUtils.mkdir_p compiled_path
     sprockets.append_path(assets_path)
     write_file(assets_path.join("application.js").to_s, "//= require_tree .")
   end
   
-  after { FileUtils.rm_rf root, :secure => true }
 
   context 'preconfigured' do
     subject { Guard::Sprockets2::Compiler.new(:sprockets => sprockets, :assets_path => compiled_path.to_s) }
@@ -30,10 +30,21 @@ describe Guard::Sprockets2::Compiler do
       app_js_path = compiled_path.join(asset.digest_path)
     
       app_js_path.should exist
-      app_js = app_js_path.read
-      app_js.should include("console.log('hello')")
+      app_js_path.read.should include("console.log('hello')")
     end
+  end
   
+  context 'with digest false' do
+    subject { Guard::Sprockets2::Compiler.new(:sprockets => sprockets, :assets_path => compiled_path.to_s, :digest => false) }
+    
+    it "compiles assets without the digest" do
+      write_file(assets_path.join("hello.coffee").to_s, "console.log 'hello'")
+      subject.compile
+      app_js_path = compiled_path.join('application.js')
+      
+      app_js_path.should exist
+      app_js_path.read.should include("console.log('hello')")
+    end
   end
   
   context 'with rails loaded' do
@@ -55,8 +66,7 @@ describe Guard::Sprockets2::Compiler do
       app_js_path = compiled_path.join(asset.digest_path)
     
       app_js_path.should exist
-      app_js = app_js_path.read
-      app_js.should include("console.log('hello2')")
+      app_js_path.read.should include("console.log('hello2')")
     end
 
     after { Object.send(:remove_const, :Rails) }

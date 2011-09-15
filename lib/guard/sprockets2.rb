@@ -28,6 +28,8 @@ module Guard
         @sprockets = options[:sprockets]
         @assets_path = options[:assets_path]
         @precompile = options[:precompile]
+        @digest = options[:digest]
+        @digest = true if @digest.nil?
         if defined?(Rails)
           @sprockets ||= Rails.application.assets
           @assets_path ||= File.join(Rails.public_path, Rails.application.config.assets.prefix)
@@ -53,7 +55,8 @@ module Guard
             end
 
             if asset = @sprockets.find_asset(logical_path)
-              filename = target.join(asset.digest_path)
+              filename = @digest ? target.join(asset.digest_path) : target.join(asset.logical_path)
+              
               FileUtils.mkdir_p filename.dirname
               asset.write_to(filename)
               asset.write_to("#{filename}.gz") if filename.to_s =~ /\.(css|js)$/
