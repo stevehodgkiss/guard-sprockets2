@@ -6,13 +6,13 @@ describe Guard::Sprockets2::Compiler do
     File.open(path, "wb") {|f| f.write data }
   end
   
-  let(:root) { Pathname.new(File.expand_path("../../../tmp", __FILE__)) }
-  let(:sprockets) { Sprockets::Environment.new(root.to_s) }
-  let(:assets_path) { root.join("assets") }
-  let(:compiled_path) { root.join("compiled") }
+  let(:tmp) { Pathname.new(File.expand_path("../../../../tmp", __FILE__)) }
+  let(:sprockets) { Sprockets::Environment.new(tmp.to_s) }
+  let(:assets_path) { tmp.join("assets") }
+  let(:compiled_path) { tmp.join("compiled") }
   
   before do
-    FileUtils.rm_rf root, :secure => true
+    FileUtils.rm_rf tmp, :secure => true
     FileUtils.mkdir_p assets_path
     FileUtils.mkdir_p compiled_path
     sprockets.append_path(assets_path)
@@ -52,7 +52,7 @@ describe Guard::Sprockets2::Compiler do
       write_file(assets_path.join("hello.coffee").to_s, "console.log 'hello2'")
       module Rails
       end
-      Rails.stub(:public_path => root)
+      Rails.stub(:public_path => tmp)
       Rails.stub_chain(:application, :assets).and_return(sprockets)
       Rails.stub_chain(:application, :config, :assets, :prefix).and_return('compiled')
       Rails.stub_chain(:application, :config, :assets, :precompile).and_return([ /\w+\.(?!js|css).+/, /application.(css|js)$/ ])
