@@ -1,7 +1,6 @@
 require 'guard/sprockets2/version'
 require 'guard'
 require 'guard/guard'
-require 'rake'
 require 'sprockets'
 
 module Guard
