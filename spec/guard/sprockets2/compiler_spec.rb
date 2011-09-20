@@ -34,6 +34,9 @@ describe Guard::Sprockets2::Compiler do
     
       app_js_path.should exist
       app_js_path.read.should include("console.log('hello')")
+      
+      app_js_gz_path = compiled_path.join("#{asset.digest_path}.gz")
+      app_js_gz_path.should exist
     end
     
     it "returns true" do
@@ -76,6 +79,19 @@ describe Guard::Sprockets2::Compiler do
       
       app_js_path.should exist
       app_js_path.read.should include("console.log('hello')")
+    end
+  end
+  
+  context 'with gz false' do
+    subject { Guard::Sprockets2::Compiler.new(:sprockets => sprockets, :assets_path => compiled_path.to_s, :gz => false) }
+    
+    it "compiles assets without the digest" do
+      write_hello_coffee("console.log 'hello'")
+      subject.compile
+      asset = sprockets.find_asset("application.js")
+      app_js_gz_path = compiled_path.join("#{asset.digest_path}.gz")
+      
+      app_js_gz_path.should_not exist
     end
   end
   

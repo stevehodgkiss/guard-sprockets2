@@ -47,21 +47,21 @@ module Guard
         end
         success
       end
-      
+
+      protected
+
       def compile_asset(asset)
         filename = @digest ? @target.join(asset.digest_path) : @target.join(asset.logical_path)
         
         FileUtils.mkdir_p filename.dirname
         asset.write_to(filename)
-        asset.write_to("#{filename}.gz") if filename.to_s =~ /\.(css|js)$/
+        asset.write_to("#{filename}.gz") if @gz && filename.to_s =~ /\.(css|js)$/
         true
       rescue => e
         puts unless ENV["GUARD_ENV"] == "test"
         UI.error e.message.gsub(/^Error: /, '')
         false
       end
-      
-      protected
       
       def path_matches?(path, logical_path)
         if path.is_a?(Regexp)
@@ -76,7 +76,7 @@ module Guard
         @assets_path = options[:assets_path]
         @precompile = options[:precompile]
         @digest = options[:digest]
-        @digest = true if @digest.nil?
+        @gz = options[:gz]
         set_defaults
       end
       
@@ -90,6 +90,8 @@ module Guard
           @precompile ||= [ /\w+\.(?!js|css).+/, /application.(css|js)$/ ]
         end
       end
+      @digest = true if @digest.nil?
+      @gz = true if @gz.nil?
     end
     
     protected
