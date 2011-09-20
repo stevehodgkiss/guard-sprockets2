@@ -39,9 +39,8 @@ describe Guard::Sprockets2::Compiler do
       app_js_gz_path.should exist
     end
     
-    it "returns true" do
-      write_hello_coffee("console.log 'hello'")
-      subject.compile.should be_true
+    describe '#compile' do
+      specify { subject.compile.should be_true }
     end
     
     context 'with an error' do
@@ -50,8 +49,8 @@ describe Guard::Sprockets2::Compiler do
         @result = subject.compile
       end
       
-      it "returns false" do
-        @result.should be_false
+      describe '#compile' do
+        specify { @result.should be_false }
       end
       
       it "works when the error has been fixed" do
