@@ -37,6 +37,7 @@ module Guard
           @assets_path ||= "#{Dir.pwd}/public/assets"
           @precompile ||= [ /\w+\.(?!js|css).+/, /application.(css|js)$/ ]
         end
+        @target = Pathname.new(@assets_path)
       end
       
       def clean
@@ -44,7 +45,8 @@ module Guard
       end
       
       def compile
-        target = Pathname.new(@assets_path)
+        @sprockets.send(:expire_index!)
+        success = true
         @precompile.each do |path|
           @sprockets.each_logical_path do |logical_path|
             if path.is_a?(Regexp)
@@ -54,14 +56,25 @@ module Guard
             end
 
             if asset = @sprockets.find_asset(logical_path)
-              filename = @digest ? target.join(asset.digest_path) : target.join(asset.logical_path)
-              
-              FileUtils.mkdir_p filename.dirname
-              asset.write_to(filename)
-              asset.write_to("#{filename}.gz") if filename.to_s =~ /\.(css|js)$/
+              success = compile_asset(asset)
+              break unless success
             end
           end
         end
+        success
+      end
+      
+      def compile_asset(asset)
+        filename = @digest ? @target.join(asset.digest_path) : @target.join(asset.logical_path)
+        
+        FileUtils.mkdir_p filename.dirname
+        asset.write_to(filename)
+        asset.write_to("#{filename}.gz") if filename.to_s =~ /\.(css|js)$/
+        true
+      rescue => e
+        puts unless ENV["GUARD_ENV"] == "test"
+        UI.error e.message.gsub(/^Error: /, '')
+        false
       end
     end
     
@@ -70,10 +83,11 @@ module Guard
     def compile_assets
       @compiler.clean
       print "Compiling assets... " unless ENV["GUARD_ENV"] == "test"
+      successful = true
       time_taken = time do
-        @compiler.compile
+        successful = @compiler.compile
       end
-      UI.info "completed in #{time_taken} seconds"
+      UI.info "completed in #{time_taken} seconds" if successful
     end
     
     def time(&block)
