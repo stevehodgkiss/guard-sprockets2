@@ -27,7 +27,7 @@ module Guard
     protected
     
     def compile_assets
-      @compiler.clean
+      @compiler.clean unless options[:clean] == false
       print "Compiling assets... " unless ENV["GUARD_ENV"] == "test"
       successful = true
       time_taken = time do
