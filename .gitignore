@@ -5,3 +5,4 @@ pkg/*
 examples/rails_app/public/assets/*
 examples/sinatra_app/public/assets/*
 tmp/*
+.sass-cache
