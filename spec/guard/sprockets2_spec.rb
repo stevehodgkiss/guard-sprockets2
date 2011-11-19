@@ -23,4 +23,20 @@ describe Guard::Sprockets2 do
     end
   end
   
+  context 'with clean disabled' do
+    before do
+      @options = {:option => true, :clean => false}
+      @guard = described_class.new(['watchers'], @options)
+    end
+    
+    %w[ start run_all run_on_change ].each do |method|
+      describe "##{method}" do
+        it "should not clean" do
+          @compiler.should_not_receive(:clean)
+          @guard.send(method)
+        end
+      end
+    end
+  end
+  
 end

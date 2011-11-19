@@ -24,6 +24,7 @@ Configure guard for your environment. The following options are available:
 that need compiling. Defaults to `[ /\w+\.(?!js|css).+/, /application.(css|js)$/ ]`
 - `digest` - Optional. Whether to include the digest in the filename. Defaults to true.
 - `gz` - Optional. Whether to compile a gzipped version of each file. Defaults to true.
+- `clean` - Optional. Whether to remove all files in the asset path. Defaults to true.
 
 Example Rails and Sinatra apps can be found in the examples directory.
 
