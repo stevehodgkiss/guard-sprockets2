@@ -2,11 +2,11 @@ module Guard
   class Sprockets2::Compiler
     def initialize(options = {})
       configure(options)
-      @target = Pathname.new(@assets_path)
+      @manifest = Sprockets::Manifest.new(@sprockets, @assets_path)
     end
   
     def clean
-      FileUtils.rm_rf @assets_path, :secure => true
+      @manifest.clean(@keep)
     end
   
     def compile
@@ -16,29 +16,13 @@ module Guard
         @sprockets.each_logical_path do |logical_path|
           next unless path_matches?(path, logical_path)
 
-          if asset = @sprockets.find_asset(logical_path)
-            success = compile_asset(asset)
-            break unless success
-          end
+          success = @manifest.compile(logical_path)
         end
       end
       success
     end
 
     protected
-
-    def compile_asset(asset)
-      filename = @digest ? @target.join(asset.digest_path) : @target.join(asset.logical_path)
-    
-      FileUtils.mkdir_p filename.dirname
-      asset.write_to(filename)
-      asset.write_to("#{filename}.gz") if @gz && filename.to_s =~ /\.(css|js)$/
-      true
-    rescue => e
-      puts unless ENV["GUARD_ENV"] == "test"
-      UI.error e.message.gsub(/^Error: /, '')
-      false
-    end
   
     def path_matches?(path, logical_path)
       if path.is_a?(Regexp)
@@ -54,6 +38,7 @@ module Guard
       @precompile = options[:precompile]
       @digest = options[:digest]
       @gz = options[:gz]
+      @keep = options[:keep]
       set_defaults
     end
   
@@ -68,6 +53,7 @@ module Guard
       end
       @digest = true if @digest.nil?
       @gz = true if @gz.nil?
+      @keep = 0 if @keep.nil?
     end
   end
 end
