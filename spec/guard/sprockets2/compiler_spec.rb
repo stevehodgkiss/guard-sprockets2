@@ -118,4 +118,22 @@ describe Guard::Sprockets2::Compiler do
 
     after { Object.send(:remove_const, :Rails) }
   end
+  
+  context 'with manifest true' do
+    subject { Guard::Sprockets2::Compiler.new(:sprockets => sprockets, :assets_path => compiled_path.to_s, :manifest => true) }
+    
+    it "compiles assets and generates manifest.yml" do
+      write_hello_coffee("console.log 'hello'")
+      subject.compile
+      asset = sprockets.find_asset("application.js")
+      app_js_path = compiled_path.join(asset.digest_path)
+      manifest_yml_path = compiled_path.join('manifest.yml')
+      
+      app_js_path.should exist
+      app_js_path.read.should include("console.log('hello')")
+      manifest_yml_path.should exist
+      manifest_yml_path.read.should == "--- \napplication.js: #{asset.digest_path}\n"
+    end
+  end
+
 end
