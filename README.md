@@ -25,6 +25,8 @@ that need compiling. Defaults to `[ /\w+\.(?!js|css).+/, /application.(css|js)$/
 - `digest` - Optional. Whether to include the digest in the filename. Defaults to true.
 - `gz` - Optional. Whether to compile a gzipped version of each file. Defaults to true.
 - `clean` - Optional. Whether to remove all files in the asset path. Defaults to true.
+- `manifest` - Optional. Whether to generate a `manifest.yml` file. Defaults to false.
+- `manifest_path` - Optional. Where to generate the manifest file. Defaults same as `assets_path`.
 
 Example Rails and Sinatra apps can be found in the examples directory.
 
